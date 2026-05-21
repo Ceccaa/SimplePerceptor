@@ -1,8 +1,11 @@
+
+
 import os
 import sys
 
 FEATURES = 5
 THRESHOLD = 1.5
+
 
 def activation(x):
     if x > THRESHOLD:
@@ -10,43 +13,41 @@ def activation(x):
     else:
         return 0
 
+
 def carica_pesi(filename):
     if not os.path.exists(filename):
         print(f"Errore: file {filename} non trovato!")
         sys.exit(1)
-        
-    weights = []
-    bias = 0.0
-    
+
     try:
         with open(filename, "r") as file:
             lines = file.readlines()
-            
-            for i in range(FEATURES):
-                valore = lines[i].split(":")[1].strip()
-                weights.append(float(valore))
-                
-            valore_bias = lines[FEATURES].split(":")[1].strip()
-            bias = float(valore_bias)
-            
+
+        weights = []
+        for i in range(FEATURES):
+            valore = lines[i].split(":")[1].strip()
+            weights.append(float(valore))
+
+        bias = float(lines[FEATURES].split(":")[1].strip())
         return weights, bias
+
     except Exception as e:
-        print(f"Errore nella formattazione o lettura del file: {e}")
+        print(f"Errore nella lettura del file: {e}")
         sys.exit(1)
+
 
 def prevedi(weights, bias, inputs):
     somma = bias
     for i in range(FEATURES):
         somma += inputs[i] * weights[i]
-        
     return activation(somma)
 
+
 def main():
-    filename = "pesi_concerto.txt"
-    weights, bias = carica_pesi(filename)
-    
+    weights, bias = carica_pesi("pesi_concerto.txt")
+
     print("Inserisci i dati:")
-    
+
     domande = [
         "Artista famoso? (1=Si, 0=No): ",
         "Bel meteo? (1=Si, 0=No): ",
@@ -54,9 +55,8 @@ def main():
         "Cibo buono? (1=Si, 0=No): ",
         "Alcool disponibile? (1=Si, 0=No): "
     ]
-    
+
     inputs = []
-    
     for domanda in domande:
         while True:
             try:
@@ -68,13 +68,14 @@ def main():
                     print("Errore: devi inserire solo 1 o 0.")
             except ValueError:
                 print("Errore: input non valido. Inserisci 1 o 0.")
-                
+
     decisione = prevedi(weights, bias, inputs)
-    
+
     if decisione == 1:
-        print("\n?? Vai al concerto!")
+        print("\nVai al concerto!")
     else:
-        print("\n?? Resta a casa!")
+        print("\nResta a casa!")
+
 
 if __name__ == "__main__":
     main()
